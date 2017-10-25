@@ -11,7 +11,8 @@ Plug 'myusuf3/numbers.vim'
 
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'easymotion/vim-easymotion'
-Plug 'kien/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'mileszs/ack.vim'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-fugitive'
@@ -20,7 +21,6 @@ Plug 'maralla/completor.vim'
 Plug 'fatih/vim-go'
 
 Plug 'itchyny/lightline.vim'
-"Plug 'scrooloose/syntastic'
 Plug 'w0rp/ale'
 Plug 'tomasr/molokai'
 Plug 'jacoborus/tender.vim'
@@ -34,10 +34,6 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'peterhoeg/vim-qml'
 
 call plug#end()
-
-"if(has("termguicolors"))
-"    set termguicolors
-"endif
 
 filetype plugin indent on           " Automatically detect filetypes
 syntax on                           " Turn on syntax hightlighting
@@ -135,9 +131,16 @@ autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType python set omnifunc=pythoncomplete#Complete
 
-" CtrlP
-set wildignore+=*/node_modules/*,*.pyc,*/.git/*,.gitignore,*/build/*  " Ignore stuff
-let g:ctrlp_working_path_mode = 2
+" fzf
+nmap ; :Buffers<CR>
+nmap <Leader>t :Files<CR>
+nmap <Leader>r :Tags<CR>
+
+" fzf-vim
+let g:fzf_buffers_jump = 1
+
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+nmap <Leader>f :Find 
 
 " DelimitMate
 "let delimitMate_expand_cr=1
@@ -157,7 +160,6 @@ if executable('ag')
 endif
 
 let g:lightline = { 'colorscheme': 'tender' }
-"let g:lightline.colorscheme = 'Molokai'
 
 " Ale
 let g:ale_sign_columns_always = 1
