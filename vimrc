@@ -166,5 +166,8 @@ let g:ale_sign_columns_always = 1
 
 let g:completor_gocode_binary = '$HOME/go/bin/gocode'
 let g:completor_clang_binary = '/usr/lib64/ccache/clang'
+let g:completor_racer_binary = '$HOME/.cargo/bin/racer'
+let g:completor_python_binary = '/usr/bin/python3'
+let g:completor_node_binary = '/usr/bin/node'
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
