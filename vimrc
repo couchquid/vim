@@ -164,7 +164,7 @@ let g:lightline = { 'colorscheme': 'tender' }
 " Ale
 let g:ale_sign_columns_always = 1
 
-let g:completor_gocode_binary = '/home/couchquid/go/bin/gocode'
-let g:completor_clang_binary = '/usr/bin/clang'
+let g:completor_gocode_binary = '$HOME/go/bin/gocode'
+let g:completor_clang_binary = '/usr/lib64/ccache/clang'
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
