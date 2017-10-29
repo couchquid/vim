@@ -32,6 +32,8 @@ Plug 'othree/html5.vim'
 Plug 'hdima/python-syntax'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'peterhoeg/vim-qml'
+Plug 'rust-lang/rust.vim'
+Plug 'cespare/vim-toml'
 
 call plug#end()
 
@@ -139,11 +141,11 @@ nmap <Leader>r :Tags<CR>
 " fzf-vim
 let g:fzf_buffers_jump = 1
 
-command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!{.git,node_modules,target}/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)    
 nmap <Leader>f :Find 
 
 " DelimitMate
-"let delimitMate_expand_cr=1
+let delimitMate_expand_cr=1
 
 " NerdTree
 let NERDTreeShowBookmarks=0         " Dont show bookmarks
@@ -163,10 +165,13 @@ let g:lightline = { 'colorscheme': 'tender' }
 
 " Ale
 let g:ale_sign_columns_always = 1
+let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
+let g:ale_linters = {'rust': ['rustc']}
 
-let g:completor_gocode_binary = '$HOME/go/bin/gocode'
+let g:completor_gocode_binary = '/home/couchquid/go/bin/gocode'
 let g:completor_clang_binary = '/usr/lib64/ccache/clang'
-let g:completor_racer_binary = '$HOME/.cargo/bin/racer'
+let g:completor_racer_binary = '/home/couchquid/.cargo/bin/racer'
 let g:completor_python_binary = '/usr/bin/python3'
 let g:completor_node_binary = '/usr/bin/node'
 
