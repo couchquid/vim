@@ -176,3 +176,9 @@ let g:completor_python_binary = '/usr/bin/python3'
 let g:completor_node_binary = '/usr/bin/node'
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+
+" Spellchecking
+autocmd BufRead COMMIT_EDITMSG setlocal spell spelllang=en_us
+autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown set spell spelllang=en_us
+
+nmap <TAB> z=
