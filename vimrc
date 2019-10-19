@@ -11,7 +11,8 @@ call plug#begin()
 
 Plug 'Raimondi/delimitMate'
 Plug 'Valloric/MatchTagAlways'
-Plug 'godlygeek/tabular'
+Plug 'tommcdo/vim-lion'
+Plug 'wellle/targets.vim'
 Plug 'myusuf3/numbers.vim'
 Plug 'tpope/vim-surround'
 
@@ -23,12 +24,14 @@ Plug 'mileszs/ack.vim'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'fatih/vim-go'
+Plug 'dense-analysis/ale'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'itchyny/lightline.vim'
 Plug 'jacoborus/tender.vim'
 
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'natebosch/vim-lsc'
+Plug 'ajh17/VimCompletesMe'
 
 Plug 'hail2u/vim-css3-syntax'
 Plug 'hdima/python-syntax'
@@ -133,7 +136,8 @@ nnoremap <C-l> <C-w>l
 "autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 "autocmd FileType python set omnifunc=pythoncomplete#Complete
 
-set completeopt=menu,menuone,preview,noinsert,noselect
+"set completeopt=menu,menuone,preview,noinsert,noselect
+set completeopt=menu,menuone,noinsert,noselect
 
 " Suppress 'pattern not found' etc messages
 set shortmess+=c
@@ -153,11 +157,11 @@ nmap <Leader>f :Find
 let delimitMate_expand_cr=1
 
 " NerdTree
-let NERDTreeShowBookmarks=0         " Dont show bookmarks
-let NERDTreeIgnore=['\.pyc', '.git', '.db']
-let NERDTreeChDirMode=0
-let NERDTreeQuitOnOpen=1
-let NERDTreeKeepTreeInNewTab=1
+let NERDTreeShowBookmarks     = 0 " Dont show bookmarks
+let NERDTreeIgnore            = ['\.pyc', '.git', '.db']
+let NERDTreeChDirMode         = 0
+let NERDTreeQuitOnOpen        = 1
+let NERDTreeKeepTreeInNewTabi = 1
 
 " Numbers.vim
 nnoremap <leader>n :NumbersToggle<CR>
@@ -166,9 +170,47 @@ nnoremap <leader>n :NumbersToggle<CR>
 autocmd BufRead COMMIT_EDITMSG setlocal spell spelllang=en_us
 autocmd BufNewFile,BufRead *.md,*.mkd,*.markdown set spell spelllang=en_us
 
-"let g:ale_sign_columns_always = 1
-"let g:ale_sign_error = '✖'
-"let g:ale_sign_warning = '⚠'
+let g:lsc_server_commands = {
+    \ 'javascript': {
+    \   'command': 'typescript-language-server --stdio',
+    \   'log_level': -1,
+    \   'suppress_stderr': v:true,
+    \ }
+    \}
+
+let g:lsc_auto_map = {
+    \ 'GoToDefinition': 'gd',
+    \ 'FindReferences' : 'gr',
+    \ 'Rename': 'gR',
+    \ 'ShowHover': 'K',
+    \ 'Completion': 'omnifunc',
+    \}
+
+let g:lsc_enable_autocomplete  = v:true
+let g:lsc_enable_diagnostics   = v:true
+let g:lsc_reference_highlights = v:false
+let g:lsc_trace_level          = 'off'
+
+" ALE
+let g:ale_fixers = {
+    \ 'css': ['prettier'],
+    \ 'javascript': ['prettier-standard'],
+    \ 'json': ['prettier'],
+    \ 'yml': ['prettier'],
+    \ }
+
+let g:ale_linters = {
+    \ 'css': ['csslint'],
+    \ 'javascript': ['standard'],
+    \ 'json': ['jsonlint'],
+    \ 'yaml': ['yamllint'],
+    \ }
+
+let g:ale_linters_explicit    = 1
+let g:ale_open_list           = 1
+let g:ale_sign_columns_always = 1
+let g:ale_sign_error          = '✖'
+let g:ale_sign_warning        = '⚠'
 
 " Lightline
 
@@ -176,19 +218,11 @@ let g:lightline = {
     \ 'colorscheme': 'tender',
     \ 'active' : {
     \   'left': [ [ 'mode', 'paste' ],
-    \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'cocerror', 'cocwarn' ] ]
+    \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
     \   ,
     \   'right': [ [ 'lineinfo' ],
     \            [ 'percent' ],
     \            [ 'fileformat', 'fileencoding', 'filetype'] ]
-    \   },
-    \   'component_expand': {
-    \       'cocerror': 'LightLineCocError',
-    \       'cocwarn': 'LightLineCocWarn',
-    \   },
-    \   'component_type': {
-    \       'cocerror': 'error',
-    \       'cocwarn': 'warning',
     \   },
     \   'component_function': {
     \       'gitbranch': 'fugitive#head',
@@ -196,77 +230,14 @@ let g:lightline = {
     \ }
 
 
-function! LightLineCocError()
-    let s:error_sign = get(g:, 'coc_status_error_sign')
-    let info = get(b:, 'coc_diagnostic_info', {})
-    if empty(info)
-        return ''
-    endif
-    let errmsgs = []
-    if get(info, 'error', 0)
-        call add(errmsgs, s:error_sign . info['error'])
-    endif
-    return trim(join(errmsgs, ' ') . ' ' . get(g:, 'coc_status', ''))
-endfunction
+let g:lightline#ale#indicator_checking = '◌'
+let g:lightline#ale#indicator_ok       = '✓'
 
-function! LightLineCocWarn() abort
-    let s:warning_sign = get(g:, 'coc_status_warning_sign')
-    let info = get(b:, 'coc_diagnostic_info', {})
-    if empty(info)
-        return '' 
-    endif
-    let warnmsgs = []
-    if get(info, 'warning', 0)
-        call add(warnmsgs, s:warning_sign . info['warning'])
-    endif
-    return trim(join(warnmsgs, ' ') . ' ' . get(g:, 'coc_status', ''))
-endfunction
-
-autocmd User CocDiagnosticChange call lightline#update()
-
-"let g:lightline#ale#indicator_checking = '◌'
-"let g:lightline#ale#indicator_ok = '✓'
-
-let g:coc_status_error_sign = '✘'
-let g:coc_status_warning_sign = '⚠'
+"let g:coc_status_error_sign = '✘'
+"let g:coc_status_warning_sign = '⚠'
 
 set updatetime=300
 set signcolumn=yes
 
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> for trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use K for show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-    if &filetype == 'vim'
-       execute 'h '.expand('<cword>')
-    else
-        call CocAction('doHover')
-    endif
-endfunction
-
-nmap <leader>rn <Plug>(coc-rename)
-
-vmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-nmap <silent> <S-j> <Plug>(coc-diagnostic-prev)
-nmap <silent> <S-k> <Plug>(coc-diagnostic-next)
+" vim-lion
+let g:lion_squeeze_spaces = 1
