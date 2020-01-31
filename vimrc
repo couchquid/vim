@@ -175,7 +175,12 @@ let g:lsc_server_commands = {
     \   'command': 'typescript-language-server --stdio',
     \   'log_level': -1,
     \   'suppress_stderr': v:true,
-    \ }
+    \ },
+    \ 'rust': {
+    \ 'command': 'rls',
+    \ 'log_level': -1,
+    \ 'suppress_stderr': v:true,
+    \ },
     \}
 
 let g:lsc_auto_map = {
@@ -187,7 +192,7 @@ let g:lsc_auto_map = {
     \}
 
 let g:lsc_enable_autocomplete  = v:true
-let g:lsc_enable_diagnostics   = v:true
+let g:lsc_enable_diagnostics   = v:false
 let g:lsc_reference_highlights = v:false
 let g:lsc_trace_level          = 'off'
 
@@ -197,6 +202,7 @@ let g:ale_fixers = {
     \ 'javascript': ['prettier-standard'],
     \ 'json': ['prettier'],
     \ 'yml': ['prettier'],
+    \ 'rust': ['rustfmt'],
     \ }
 
 let g:ale_linters = {
@@ -204,6 +210,7 @@ let g:ale_linters = {
     \ 'javascript': ['standard'],
     \ 'json': ['jsonlint'],
     \ 'yaml': ['yamllint'],
+    \ 'rust': ['rls'],
     \ }
 
 let g:ale_linters_explicit    = 1
